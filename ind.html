@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Order Page</title>
+<style>
+body{
+  margin:0;
+  font-family:Poppins, Arial;
+  background:#f5f5f5;
+}
+h2{
+  background:#7b1e12;
+  color:white;
+  padding:15px;
+  margin:0;
+  text-align:center;
+}
+.container{
+  max-width:500px;
+  width:90%;
+  margin:30px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+#orderSummary{
+  background:#fff3e6;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+  text-align:center;
+}
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+button{
+  width:100%;
+  padding:14px;
+  background:#27ae60;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+button:hover{
+  background:#219150;
+}
+.payment label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+  cursor:pointer;
+ border:1px solid #eee;
+  padding:10px;
+  border-radius:8px;
+justify-content:space-between;
+
+}
+.upi-text{
+  font-weight:600;
+  color:#7b1e12;
+}
+.payment{
+  margin-top:10px;
+}
+
+.pay-option{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid #eee;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+
+/* FIX radio alignment */
+.pay-option input[type="radio"]{
+  margin:0;
+  width:18px;
+  height:18px;
+}
+
+/* FIX text wrapping */
+.pay-option span{
+  display:block;
+  text-align:left;
+  max-width:85%;
+}
+
+/* UPI text styling */
+.upi-text{
+  color:#7b1e12;
+  font-weight:600;
+  margin-left:5px;
+}
+</style>
+</head>
+<body>
+
+<h2>Order Details</h2>
+<div class="container">
+
+<div id="orderSummary"></div>
+
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<textarea id="address" placeholder="Address (Only Rajahmundry)"></textarea>
+
+<div class="payment">
+  <label class="pay-option">
+    <span>Cash on Delivery</span>
+    <input type="radio" name="pay" value="Cash on Delivery" checked>
+  </label>
+
+  <label class="pay-option">
+    <span>
+      UPI <span class="upi-text">(ID:9515996668@airtel)</span>
+    </span>
+    <input type="radio" name="pay" value="UPI">
+  </label>
+</div>
+
+<button onclick="placeOrder()">Place Order</button>
+</div>
+
+<script>
+let item = JSON.parse(localStorage.getItem("buyNowItem"));
+
+if(item){
+  document.getElementById("orderSummary").innerHTML =
+    `<h3>${item.name}</h3>
+     <p>Price: ₹${item.price}</p>`;
+}
+
+function placeOrder(){
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let address = document.getElementById("address").value.toLowerCase();
+  let payment = document.querySelector('input[name="pay"]:checked').value;
+
+  if(!name || !phone || !address){
+    alert("Please fill all details");
+    return;
+  }
+
+  if(!(address.includes("rajahmundry") || address.includes("rajamundry") || address.includes("rajamndry"))){
+    alert("Delivery available only in Rajahmundry");
+    return;
+  }
+
+  let msg = ` *New Order*
+
+ Item: ${item.name}
+ Price: ₹${item.price}
+
+ Payment: ${payment}
+
+`;
+
+  // ✅ If UPI selected → add payment instruction
+  if(payment === "UPI"){
+    msg += ` Pay to UPI ID: 9515996668@airtel
+ After payment, please send screenshot here.
+
+`;
+  }
+
+  msg += ` Name: ${name}
+ Phone: ${phone}
+ Address: ${address}`;
+
+  // ✅ Open WhatsApp directly
+  window.open("https://wa.me/919515996668?text=" + encodeURIComponent(msg), "_blank");
+}
+</script>
+</body>
+</html>
